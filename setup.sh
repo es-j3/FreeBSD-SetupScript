@@ -47,7 +47,7 @@ update_repository() {
 }
 
 configure_graphics() {
-    echo "Select graphics provider. Your options are: 'SCFB', 'Intel', 'AMD', 'AMDRX7000', 'Nvidia', and 'VMWare':"
+    echo "Select graphics provider. Your options are: 'Virtualbox', 'Intel', 'AMD', 'AMDRX7000', 'Nvidia', and 'VMWare':"
     read provider_name
     case "$provider_name" in
         Intel)
@@ -67,8 +67,8 @@ configure_graphics() {
             kld_command="sysrc kld_list+=nvidia-modeset"
             ;;
         Virtualbox)
-            install_command="pkg install -y virtualbox-ose-additions && sysrc vboxguest_enable=\"YES\" && sysrc vboxserviceenable=\"YES\""
-            kld_command="sysrc kld_list+=vboxvideo"
+            install_command="pkg install -y virtualbox-ose-additions"
+            kld_command="whoami"
             ;;
         VMWare)
             install_command="pkg install -y xf86-video-vmware"
