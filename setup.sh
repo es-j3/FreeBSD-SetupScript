@@ -109,10 +109,10 @@ configure_graphics() {
             ;;
     esac
     # Ask for desktop environment or Wayland compositor
-    echo "Do you want to install an X-based desktop environment, or a Wayland compositor? Type 'xorg' for an X-based DE, and 'wayland' for a compositor."
+    echo "Do you want to install an Desktop Environment, Compositor? Type 'de' for a Desktop Environment, and 'comp' for a compositor."
     read choice
     case "$choice" in
-        xorg)
+        desktop)
             echo "Alright, you have the following options: Plasma Plasma-Minimal Gnome Gnome-Minimal XFCE Mate Mate-Minimal Cinnamon LXQT"
             echo "Choose your desktop environment: "
             read de_choice
@@ -159,8 +159,8 @@ configure_graphics() {
                     ;;
             esac
             ;;
-        wayland)
-            echo "You have the following options: Hyprland Sway SwayFX"
+        comp)
+            echo "You have the following options: Hyprland Sway SwayFX River i3"
             echo "Choose your Wayland compositor: "
             read compositor_choice
             case "$compositor_choice" in
@@ -177,13 +177,23 @@ configure_graphics() {
                     confirm_install "pkg install -y swayfx foot wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
                     ;;
                 *)
+                River)
+                    echo "You selected River."
+                    confirm_install "pkg install -y river wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
+                    ;;
+                *)
+                i3)
+                    echo "You selected i3."
+                    confirm_install "pkg install -y i3 alacritty"
+                    ;;
+                *)
                     echo "Invalid option. Please choose from the listed options."
                     exit 1
                     ;;
             esac
             ;;
         *)
-            echo "Invalid option. Please choose 'xorg' or 'wayland'."
+            echo "Invalid option. Please choose 'de' or 'comp'."
             exit 1
             ;;
     esac
