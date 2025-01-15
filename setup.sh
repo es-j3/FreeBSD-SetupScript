@@ -4,26 +4,9 @@ if [ "$(id -u)" -ne 0 ]; then
     echo "Gotta run this as root, sorry. To execute as root, run 'su' in your terminal!"
     exit 1
 fi
-
 # Function to update the repository to the latest
 update_repository() {
-    echo "
-
-                                                                                     @@@@@@@@@@      @@@@@@                                                                                                                                                           
-   @@@@@@*@@@@@   =@@@@@@@@@          @@@@@@@@     @@@@@@+                       @@@@@@@@         @@@@@@@@    -@@   %@+   @@:   @@                                                                                                                                        
-   @@             *@@     @@@       @@@            @@  =@@@@@                 %@@%              @@@           -@@   @@+   @@:   @@                                                                                                                                        
-   @@             %@@      @@      @@              @@      @@@@              *@@               @@             =@@   @@+   @@:   @@                                                                                                                                        
-   @@ -@@@@@*     @@%     @@%      @@@             @@        @@@             =@@@              @@@            +@@   @@+   @@:   @@                                                                                                                                        
-   @@@@@@@@@@.    @@@@@@@@@:        +@@@@@@@@      @@.        *@@              @@@@@@@@@        =@@@@@@@@     *@@   @@+   @@:   @@                                                                                                                                        
-   @@             @@@@@@@@@@+              :@@@    @@          @@                     #@@%             .@@@   *@@   @@+   @@:   @@                                                                                                                                        
-   @@             @@       @@@               @@    @@          @@                       @@               @@   -@@   %@+   @@:   @@                                                                                                                                        
-   @@             @@       @@@   @@         =@@    @@         @@@           @#         @@@   %@         .@@    .     .     .     .                                                                                                                                        
-   @@             @@ =@@@@@@@    @@@@     @@@@     @@=      @@@%            @@@=     @@@@    @@@@     @@@@                                                                                                                                                                
-   @@             @@@@@@@          *@@@@@@@        -@@@@@@@@@%                @@@@@@@@         +@@@@@@@       %@@   @@=   @@.   @@                         
-                                                                                                    
-"                                                                                                    
-
-
+                                                                                               
     echo "Would you like to update to the latest repository? (Probably will need this for access to many drivers and desktops) (y/n):"
     read update_confirm
     case "$update_confirm" in
@@ -51,24 +34,12 @@ configure_graphics() {
     read provider_name
     case "$provider_name" in
         Intel)
-            install_command="pkg install -y drm-kmod libva-intel-driver xf86-video-intel"
-            kld_command="sysrc kld_list+=i915kms"
-            ;;
-        AMD)
-            install_command="pkg install -y drm-kmod xf86-video-amdgpu"
-            kld_command="sysrc kld_list+=amdgpu"
-            ;;
-        AMDRX7000)
-            install_command="pkg install -y graphics/gpu-firmware-amd-kmod xf86-video-amdgpu && cd /usr/ports/graphics/drm-61-kmod && make -DBATCH install clean"
-            kld_command="sysrc kld_list+=amdgpu"
-            ;;
-        Nvidia)
-            install_command="pkg install -y nvidia-driver"
+@@ -67,8 +67,8 @@ configure_graphics() {
             kld_command="sysrc kld_list+=nvidia-modeset"
             ;;
         Virtualbox)
-            install_command="pkg install -y virtualbox-ose-additions"
-            kld_command="whoami"
+            install_command="pkg install -y virtualbox-ose-additions && sysrc vboxguest_enable=\"YES\" && sysrc vboxserviceenable=\"YES\""
+            kld_command="sysrc kld_list+=vboxvideo"
             ;;
         VMWare)
             install_command="pkg install -y xf86-video-vmware"
@@ -109,10 +80,10 @@ configure_graphics() {
             ;;
     esac
     # Ask for desktop environment or Wayland compositor
-    echo "Do you want to install an Desktop Environment, Compositor? Type 'de' for a Desktop Environment, and 'comp' for a compositor."
+    echo "Do you want to install an X-based desktop environment, or a Wayland compositor? Type 'xorg' for an X-based DE, and 'wayland' for a compositor."
     read choice
     case "$choice" in
-        desktop)
+        xorg)
             echo "Alright, you have the following options: Plasma Plasma-Minimal Gnome Gnome-Minimal XFCE Mate Mate-Minimal Cinnamon LXQT"
             echo "Choose your desktop environment: "
             read de_choice
@@ -159,8 +130,8 @@ configure_graphics() {
                     ;;
             esac
             ;;
-        comp)
-            echo "You have the following options: Hyprland Sway SwayFX River i3"
+        wayland)
+            echo "You have the following options: Hyprland Sway SwayFX"
             echo "Choose your Wayland compositor: "
             read compositor_choice
             case "$compositor_choice" in
@@ -177,29 +148,17 @@ configure_graphics() {
                     confirm_install "pkg install -y swayfx foot wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
                     ;;
                 *)
-                River)
-                    echo "You selected River."
-                    confirm_install "pkg install -y river wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
-                    ;;
-                *)
-                i3)
-                    echo "You selected i3."
-                    confirm_install "pkg install -y i3 alacritty"
-                    ;;
-                *)
                     echo "Invalid option. Please choose from the listed options."
                     exit 1
                     ;;
             esac
             ;;
         *)
-            echo "Invalid option. Please choose 'de' or 'comp'."
+            echo "Invalid option. Please choose 'xorg' or 'wayland'."
             exit 1
             ;;
     esac
-
 sleep 5
-
     # Prompt to install Auto Mount utility
     echo "Would you like to install Automount? (Highly recommended for mounting drives and removable media automatically on FreeBSD) (y/n): "
     read automount_confirm
@@ -218,7 +177,6 @@ sleep 5
             ;;
     esac
 }
-
 # Function to confirm and install the selected package
 confirm_install() {
     local command="$1"
@@ -239,7 +197,6 @@ confirm_install() {
             ;;
     esac
 }
-
 # Function to prompt for a reboot
 prompt_reboot() {
     echo "Would you like to reboot the system now? (y/n): "
@@ -258,7 +215,6 @@ prompt_reboot() {
             ;;
     esac
 }
-
 # Update repository if user agrees
 update_repository
 # Run the function
