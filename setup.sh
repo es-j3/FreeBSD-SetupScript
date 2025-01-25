@@ -29,25 +29,34 @@ update_repository() {
     esac
 }
 
+
 configure_graphics() {
-    echo "Select graphics provider. Your options are: 'Virtualbox', 'Intel', 'AMD', 'AMDRX7000', 'Nvidia', and 'VMWare':"
+    echo "Select graphics provider. Your options are: 'Intel', 'AMD', 'AMDRX7000' (Newest Lineup, or newer drivers if you want that :),) 'Nvidia', 'Virtualbox', and 'VMWare':"
     read provider_name
     case "$provider_name" in
         Intel)
-@@ -67,8 +67,8 @@ configure_graphics() {
+            install_command="pkg install -y drm-kmod libva-intel-driver xf86-video-intel"
+            kld_command="sysrc kld_list+=i915kms"
+            ;;
+        AMD)
+            install_command="pkg install -y drm-kmod xf86-video-amdgpu"
+            kld_command="sysrc kld_list+=amdgpu"
+            ;;
+        AMDRX7000)
+            install_command="pkg install -y graphics/gpu-firmware-amd-kmod xf86-video-amdgpu && cd /usr/ports/graphics/drm-61-kmod && make -DBATCH install clean"
+            kld_command="sysrc kld_list+=amdgpu"
+            ;;
+        Nvidia)
+            install_command="pkg install -y nvidia-driver"
             kld_command="sysrc kld_list+=nvidia-modeset"
             ;;
         Virtualbox)
-            install_command="pkg install -y virtualbox-ose-additions && sysrc vboxguest_enable=\"YES\" && sysrc vboxserviceenable=\"YES\""
+            install_command="pkg install -y virtualbox-ose-additions && sysrc vboxguest_enable=\"YES\" && sysrc vboxserviceenable=\"YES\" && whoami"
             kld_command="sysrc kld_list+=vboxvideo"
             ;;
         VMWare)
             install_command="pkg install -y xf86-video-vmware"
             kld_command="sysrc kld_list+=vmwgfx"
-            ;;
-        SCFB)
-            install_command="pkg install -y xf86-video-scfb"
-            kld_command="sysrc kld_list+=scfb"
             ;;
         *)
             echo "Invalid option. Please choose between Intel, AMD, or Nvidia. Virtualbox or VMware.."
