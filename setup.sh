@@ -38,7 +38,6 @@ configure_graphics() {
             install_command="pkg install -y graphics/gpu-firmware-intel-kmod && cd /usr/ports/graphics/drm-61-kmod && make -DBATCH install clean"
             kld_command="sysrc kld_list+=i915kms"
             ;;
-        Intel)
         AMD)
             install_command="pkg install -y drm-kmod xf86-video-amdgpu"
             kld_command="sysrc kld_list+=amdgpu"
