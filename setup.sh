@@ -31,13 +31,14 @@ update_repository() {
 
 
 configure_graphics() {
-    echo "Select graphics provider. Your options are: 'Intel', 'AMD', 'AMDRX7000' (Newest Lineup, or newer drivers if you want that :),) 'Nvidia', 'Virtualbox', and 'VMWare':"
+    echo "Select graphics provider. Your options are: 'Intel','AMD', 'Nvidia', 'Virtualbox', and 'VMWare':"
     read provider_name
     case "$provider_name" in
         Intel)
-            install_command="pkg install -y drm-kmod libva-intel-driver xf86-video-intel"
+            install_command="pkg install -y graphics/gpu-firmware-intel-kmod && cd /usr/ports/graphics/drm-61-kmod && make -DBATCH install clean"
             kld_command="sysrc kld_list+=i915kms"
             ;;
+        Intel)
         AMD)
             install_command="pkg install -y drm-kmod xf86-video-amdgpu"
             kld_command="sysrc kld_list+=amdgpu"
