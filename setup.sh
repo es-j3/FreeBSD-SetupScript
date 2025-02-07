@@ -31,7 +31,7 @@ update_repository() {
 
 
 configure_graphics() {
-    echo "Select graphics provider. Your options are: 'Intel','AMD', 'Nvidia', 'Virtualbox', and 'VMWare':"
+    echo "Select graphics provider. Your options are: 'Intel','AMD', 'AMD-Legacy', 'Nvidia', 'Virtualbox', and 'VMWare':"
     read provider_name
     case "$provider_name" in
         Intel)
@@ -39,12 +39,12 @@ configure_graphics() {
             kld_command="sysrc kld_list+=i915kms"
             ;;
         AMD)
-            install_command="pkg install -y drm-kmod xf86-video-amdgpu"
-            kld_command="sysrc kld_list+=amdgpu"
-            ;;
-        AMDRX7000)
             install_command="pkg install -y graphics/gpu-firmware-amd-kmod xf86-video-amdgpu && cd /usr/ports/graphics/drm-61-kmod && make -DBATCH install clean"
             kld_command="sysrc kld_list+=amdgpu"
+            ;;
+        AMD-Legacy)
+            install_command="pkg install -y graphics/gpu-firmware-amd-kmod xf86-video-amdgpu && cd /usr/ports/graphics/drm-61-kmod && make -DBATCH install clean"
+            kld_command="sysrc kld_list+=radeonkms"
             ;;
         Nvidia)
             install_command="pkg install -y nvidia-driver"
