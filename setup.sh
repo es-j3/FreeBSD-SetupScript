@@ -1,29 +1,29 @@
 #!/bin/sh
 # Check if the script is being run as root
 if [ "$(id -u)" -ne 0 ]; then
-    echo -n "Gotta run this as root, sorry. To execute as root, run 'su' in your terminal!"
+    echo "Gotta run this as root, sorry. To execute as root, run 'su' in your terminal!"
     exit 1
 fi
 # Function to update the repository to the latest
 update_repository() {
                                                                                                
-    echo -n "Would you like to update to the latest repository? (Probably will need this for access to many drivers and desktops) (y/n):"
+    echo -n "Would you like to update to the latest repository? (Probably will need this for access to many drivers and desktops) (y/n): "
     read update_confirm
     case "$update_confirm" in
         [Yy])
-            echo -n "Updating /etc/pkg/FreeBSD.conf to the latest repository..."
-            echo -n "Alright, updating FreeBSD to the latest repo!"
-            echo -n 'FreeBSD: {' > /etc/pkg/FreeBSD.conf
-            echo -n '  url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest",' >> /etc/pkg/FreeBSD.conf
-            echo -n '  mirror_type: "srv",' >> /etc/pkg/FreeBSD.conf
-            echo -n '}' >> /etc/pkg/FreeBSD.conf
-            echo -n "Repository updated to the latest."
+            echo "Updating /etc/pkg/FreeBSD.conf to the latest repository..."
+            echo "Alright, updating FreeBSD to the latest repo!"
+            echo 'FreeBSD: {' > /etc/pkg/FreeBSD.conf
+            echo '  url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest",' >> /etc/pkg/FreeBSD.conf
+            echo '  mirror_type: "srv",' >> /etc/pkg/FreeBSD.conf
+            echo '}' >> /etc/pkg/FreeBSD.conf
+            echo "Repository updated to the latest."
             ;;
         [Nn])
-            echo -n "Alright, no changes made."
+            echo "Alright, no changes made."
             ;;
         *)
-            echo -n "Invalid response. Please enter y or n."
+            echo "Invalid response. Please enter y or n."
             exit 1
             ;;
     esac
@@ -31,7 +31,7 @@ update_repository() {
 
 
 configure_graphics() {
-    echo -n "Select graphics provider. Your options are: 'Intel','AMD', 'AMD-Legacy', 'Nvidia', 'Virtualbox', and 'VMWare':"
+    echo -n "Select graphics provider. Your options are: 'Intel','AMD', 'AMD-Legacy', 'Nvidia', 'Virtualbox', and 'VMWare': "
     read provider_name
     case "$provider_name" in
         Intel)
@@ -59,32 +59,32 @@ configure_graphics() {
             kld_command="sysrc kld_list+=vmwgfx"
             ;;
         *)
-            echo -n "Invalid option. Please choose between Intel, AMD, or Nvidia. Virtualbox or VMware.."
+            echo "Invalid option. Please choose between Intel, AMD, or Nvidia. Virtualbox or VMware.."
             exit 1
             ;;
     esac
     # Display the selected provider and ask for confirmation
-    echo -n "You selected $provider_name."
-    echo -n "Do you want to install drivers for $provider_name? (y/n):"
+    echo "You selected $provider_name. "
+    echo -n "Do you want to install drivers for $provider_name? (y/n): "
     read confirm
     case "$confirm" in
         [Yy])
-            echo -n "Installing drivers for $provider_name..."
+            echo "Installing drivers for $provider_name..."
             eval "$install_command"
             eval "$kld_command"
-            echo -n "Drivers installed and configured."
+            echo "Drivers installed and configured."
             # Prompt for the non-root username and add to the video group
-            echo -n "Enter the username of the non-root user to add to the video group:"
+            echo "Enter the username of the non-root user to add to the video group:"
             read username
             pw groupmod video -m "$username"
-            echo -n "User $username has been added to the video group."
+            echo "User $username has been added to the video group."
             ;;
         [Nn])
-            echo -n "Installation canceled."
+            echo "Installation canceled."
             exit 0
             ;;
         *)
-            echo -n "Invalid response. Please enter y or n."
+            echo "Invalid response. Please enter y or n."
             exit 1
             ;;
     esac
@@ -93,77 +93,77 @@ configure_graphics() {
     read choice
     case "$choice" in
         xorg)
-            echo -n "Alright, you have the following options: Plasma Plasma-Minimal Gnome Gnome-Minimal XFCE Mate Mate-Minimal Cinnamon LXQT"
+            echo "Alright, you have the following options: Plasma Plasma-Minimal Gnome Gnome-Minimal XFCE Mate Mate-Minimal Cinnamon LXQT"
             echo -n "Choose your desktop environment: "
             read de_choice
             case "$de_choice" in
                 Plasma)
-                    echo -n "You selected KDE Plasma."
+                    echo "You selected KDE Plasma."
                     confirm_install "pkg install -y kde5 sddm xorg && sysrc dbus_enable=\"YES\" && sysrc sddm_enable=\"YES\""
                     ;;
                 Plasma-Minimal)
-                    echo -n "You selected KDE Plasma Minimal."
+                    echo "You selected KDE Plasma Minimal."
                     confirm_install "pkg install -y plasma5-plasma konsole dolphin sddm xorg && sysrc dbus_enable=\"YES\" && sysrc sddm_enable=\"YES\""
                     ;;
                 Gnome)
-                    echo -n "You selected GNOME."
+                    echo "You selected GNOME."
                     confirm_install "pkg install -y gnome xorg && sysrc dbus_enable=\"YES\" && sysrc gdm_enable=\"YES\""
                     ;;
                 Gnome-Minimal)
-                    echo -n "You selected GNOME Minimal."
+                    echo "You selected GNOME Minimal."
                     confirm_install "pkg install -y gnome-lite gnome-terminal xorg && sysrc dbus_enable=\"YES\" && sysrc gdm_enable=\"YES\""
                     ;;
                 XFCE)
-                    echo -n "You selected XFCE."
+                    echo "You selected XFCE."
                     confirm_install "pkg install -y xfce lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=\"YES\" && sysrc lightdm_enable=\"YES\""
                     ;;
                 Mate)
-                    echo -n "You selected MATE."
+                    echo "You selected MATE."
                     confirm_install "pkg install -y mate lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=\"YES\" && sysrc lightdm_enable=\"YES\""
                     ;;
                 Mate-Minimal)
-                    echo -n "You selected MATE Minimal."
+                    echo "You selected MATE Minimal."
                     confirm_install "pkg install -y mate-base mate-terminal lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=\"YES\" && sysrc lightdm_enable=\"YES\""
                     ;;
                 Cinnamon)
-                    echo -n "You selected Cinnamon."
+                    echo "You selected Cinnamon."
                     confirm_install "pkg install -y cinnamon lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=\"YES\" && sysrc lightdm_enable=\"YES\""
                     ;;
                 LXQT)
-                    echo -n "You selected LXQT."
+                    echo "You selected LXQT."
                     confirm_install "pkg install -y lxqt sddm xorg && sysrc dbus_enable=\"YES\" && sysrc sddm_enable=\"YES\""
                     ;;
                 *)
-                    echo -n "Invalid option. Please choose from the listed options."
+                    echo "Invalid option. Please choose from the listed options."
                     exit 1
                     ;;
             esac
             ;;
         wayland)
-            echo -n "You have the following options: Hyprland Sway SwayFX"
+            echo "You have the following options: Hyprland Sway SwayFX"
             echo -n "Choose your Wayland compositor: "
             read compositor_choice
             case "$compositor_choice" in
                 Hyprland)
-                    echo -n "You selected Hyprland."
-                    confirm_install "pkg install -y hyprland kitty wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo -n SeatD Started!"
+                    echo "You selected Hyprland."
+                    confirm_install "pkg install -y hyprland kitty wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
                     ;;
                 Sway)
-                    echo -n "You selected Sway."
-                    confirm_install "pkg install -y sway foot wayland seatd xorg-fonts && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo -n SeatD Started!"
+                    echo "You selected Sway."
+                    confirm_install "pkg install -y sway foot wayland seatd xorg-fonts && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
                     ;;
                 SwayFX)
-                    echo -n "You selected SwayFX."
-                    confirm_install "pkg install -y swayfx foot wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo -n SeatD Started!"
+                    echo "You selected SwayFX."
+                    confirm_install "pkg install -y swayfx foot wayland xorg-fonts seatd && sysrc seatd_enable=\"YES\" && sysrc dbus_enable=\"YES\" && service seatd start && echo SeatD Started!"
                     ;;
                 *)
-                    echo -n "Invalid option. Please choose from the listed options."
+                    echo "Invalid option. Please choose from the listed options."
                     exit 1
                     ;;
             esac
             ;;
         *)
-            echo -n "Invalid option. Please choose 'xorg' or 'wayland'."
+            echo "Invalid option. Please choose 'xorg' or 'wayland'."
             exit 1
             ;;
     esac
@@ -173,15 +173,15 @@ sleep 5
     read automount_confirm
     case "$automount_confirm" in
         [Yy])
-            echo -n "Installing Automount..."
+            echo "Installing Automount..."
             pkg install -y automount
-            echo -n "Automount installed!"
+            echo "Automount installed!"
             ;;
         [Nn])
-            echo -n "Skipping Auto Mount utility installation."
+            echo "Skipping Auto Mount utility installation."
             ;;
         *)
-            echo -n "Invalid response. Please enter y or n."
+            echo "Invalid response. Please enter y or n."
             exit 1
             ;;
     esac
@@ -193,15 +193,15 @@ confirm_install() {
     read confirm
     case "$confirm" in
         [Yy])
-            echo -n "Executing: $command"
+            echo "Executing: $command"
             eval "$command"
-            echo -n "Installation and configuration complete."
+            echo "Installation and configuration complete."
             ;;
         [Nn])
-            echo -n "Installation canceled."
+            echo "Installation canceled."
             ;;
         *)
-            echo -n "Invalid response. Please enter y or n."
+            echo "Invalid response. Please enter y or n."
             exit 1
             ;;
     esac
@@ -212,14 +212,14 @@ prompt_reboot() {
     read reboot_confirm
     case "$reboot_confirm" in
         [Yy])
-            echo -n "Rebooting now..."
+            echo "Rebooting now..."
             reboot
             ;;
         [Nn])
-            echo -n "Reboot skipped. Please remember to reboot later for all changes to take effect."
+            echo "Reboot skipped. Please remember to reboot later for all changes to take effect."
             ;;
         *)
-            echo -n "Invalid response. Please enter y or n."
+            echo "Invalid response. Please enter y or n."
             exit 1
             ;;
     esac
