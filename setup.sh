@@ -1,10 +1,8 @@
 #!/bin/sh
-# Check if the script is being run as root
 if [ "$(id -u)" -ne 0 ]; then
     echo "Gotta run this as root, sorry. To execute as root, run 'su' in your terminal!"
     exit 1
 fi
-# Function to update the repository to the latest
 update_repository() {
                                                                                                
     echo -n "Would you like to update to the latest repository? (Probably will need this for access to many drivers and desktops) (y/n): "
@@ -63,7 +61,6 @@ configure_graphics() {
             exit 1
             ;;
     esac
-    # Display the selected provider and ask for confirmation
     echo "You selected $provider_name. "
     echo -n "Do you want to install drivers for $provider_name? (y/n): "
     read confirm
@@ -73,8 +70,7 @@ configure_graphics() {
             eval "$install_command"
             eval "$kld_command"
             echo "Drivers installed and configured."
-            # Prompt for the non-root username and add to the video group
-            echo "Enter the username of the non-root user to add to the video group:"
+            echo -n "Enter the username of the non-root user to add to the video group: "
             read username
             pw groupmod video -m "$username"
             echo "User $username has been added to the video group."
@@ -88,7 +84,6 @@ configure_graphics() {
             exit 1
             ;;
     esac
-    # Ask for desktop environment or Wayland compositor
     echo -n "Do you want to install an X-based desktop environment, or a Wayland compositor? Type 'xorg' for an X-based DE, and 'wayland' for a compositor."
     read choice
     case "$choice" in
@@ -168,7 +163,6 @@ configure_graphics() {
             ;;
     esac
 sleep 5
-    # Prompt to install Auto Mount utility
     echo -n "Would you like to install Automount? (Highly recommended for mounting drives and removable media automatically on FreeBSD) (y/n): "
     read automount_confirm
     case "$automount_confirm" in
@@ -186,7 +180,6 @@ sleep 5
             ;;
     esac
 }
-# Function to confirm and install the selected package
 confirm_install() {
     local command="$1"
     echo -n "Do you want to proceed with the following command? $command (y/n): "
@@ -206,7 +199,6 @@ confirm_install() {
             ;;
     esac
 }
-# Function to prompt for a reboot
 prompt_reboot() {
     echo -n "Would you like to reboot the system now? (y/n): "
     read reboot_confirm
@@ -224,9 +216,6 @@ prompt_reboot() {
             ;;
     esac
 }
-# Update repository if user agrees
 update_repository
-# Run the function
 configure_graphics
-# Prompt for reboot
 prompt_reboot
