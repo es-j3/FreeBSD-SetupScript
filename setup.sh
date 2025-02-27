@@ -116,6 +116,18 @@ fi
         
         sleep 3
 
+echo "
+ ██████  ██████   ██████  ██    ██ ██████  ███████ 
+██       ██   ██ ██    ██ ██    ██ ██   ██ ██      
+██   ███ ██████  ██    ██ ██    ██ ██████  ███████ 
+██    ██ ██   ██ ██    ██ ██    ██ ██           ██ 
+ ██████  ██   ██  ██████   ██████  ██      ███████ 
+"
+
+    echo -n "Enter the username of your non-root user to add to the video group: "
+        read video_group
+        pw groupmod video -m $video_group
+
         echo "
  ██████  ██    ██ ██
 ██       ██    ██ ██
@@ -281,7 +293,7 @@ fi
                             ;;
                             8)
                                 echo "Installing the way of fire..."
-                                pkg install -y wayfire alacritty  && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
+                                pkg install -y wayfire alacritty xorg-fonts seatd && sysrc dbus_enable=YES && sysrc seatd_enable="YES" && service seatd start
                                 echo "Success!"
                             ;;
                         esac
@@ -318,7 +330,8 @@ fi
                             ;;
                             3)
                                 echo "Installing SDDM..."
-                                pkg install -y sddm &>/dev/null && sysrc sddm_enable="YES"
+                                pkg install -y sddm && sysrc sddm_enable="YES"
+                                echo "Success!"
                             ;;
                            *)   
                                 echo "This looks invalid, follow the instructions."
@@ -327,4 +340,4 @@ fi
                         
                         esac
                     esac
-echo "Hello, looks like we've reached the end! Thanks for using this script, and enjoy FreeBSD :D"
+echo "Hello, looks like we've reached the end! Thanks for using this script, and enjoy your FreeBSD install."
