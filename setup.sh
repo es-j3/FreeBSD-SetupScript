@@ -1,5 +1,8 @@
 #!/bin/sh
 
+SRC_PATH="/usr/src/sys"
+PORTS_PATH="/usr/ports/emulators"
+
 if [ "$(id -u)" -ne 0 ]; then
     echo "Root is required."
     exit 1
@@ -19,13 +22,46 @@ fi
          
         sleep 2
          
-        echo
+     if [ ! -d "$SRC_PATH" ]; then
+      printf "It looks like you are missing the system source tree in /usr/src. This is required for the script to function. Would you like to clone it now? (y/n): "
+      read -r src_confirm 
+        case "$src_confirm" in
+            [Yy])
+                echo "Installing git to clone the source tree..."
+                pkg install -y git
+                git clone https://github.com/freebsd/freebsd-src.git --depth 1 /usr/src
+                ;;
+            [Nn])
+                    echo "Alright, no changes made."
+                    ;;
+                *)
+                    echo "Invalid response, enter y or n."
+                    exit 1
+                    ;;
+        esac
+    fi
+
+     if [ ! -d "$PORTS_PATH" ]; then
+      printf "Looks like the ports tree is not here, and it's required for this script to properly function. Clone it now?"
+      read -r ports_confirm 
+        case "$ports_confirm" in
+            [Yy])
+                echo "Installing git to clone ports..."
+                pkg install -y git
+                git clone https://github.com/freebsd/freebsd-ports.git --depth 1 /usr/ports
+                ;;
+            [Nn])
+                    echo "Alright, no changes made."
+                    ;;
+                *)
+                    echo "Invalid response, enter y or n."
+                    exit 1
+                    ;;
+        esac
+    fi
          
         sleep 2
-         
-        echo 'Please make sure you also have the ports tree in /usr/ports, as it is required for this script to function properly.'
-        echo 'I trust you have it :)'
-        sleep 1
+
          
         echo "
 ██████  ███████ ██████   ██████  ███████
@@ -35,15 +71,15 @@ fi
 ██   ██ ███████ ██       ██████  ███████
         "
          
-        echo -n 'To start, would you like to switch to the latest repo from quarterly? (y/n): '
-        read repo_switch
+        printf 'To start, would you like to switch to the latest repo from quarterly? (y/n): '
+        read -r repo_switch
             case "$repo_switch" in
                 [Yy])
                     echo "Alright, updating FreeBSD to the latest repo!"
-                    echo 'FreeBSD: {' > /etc/pkg/FreeBSD.conf
-                    echo '  url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest",' >> /etc/pkg/FreeBSD.conf
-                    echo '  mirror_type: "srv",' >> /etc/pkg/FreeBSD.conf
-                    echo '}' >> /etc/pkg/FreeBSD.conf
+                    echo "FreeBSD: {" > /etc/pkg/FreeBSD.conf
+                    echo "  url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest"," >> /etc/pkg/FreeBSD.conf
+                    echo "  mirror_type: "srv"," >> /etc/pkg/FreeBSD.conf
+                    echo "}" >> /etc/pkg/FreeBSD.conf
                     ;;
                 [Nn])
                     echo "Alright, no changes made."
@@ -69,9 +105,9 @@ fi
         echo "4 - Nvidia"
         echo "5 - VMware"
         echo " "
-        echo -n "What will it be?: "
+        printf "What will it be?: "
          
-        read graphics
+        read -r graphics
             case "$graphics" in
                 0)
                     sleep 1
@@ -79,31 +115,31 @@ fi
          
                 1)
                     echo 'Installing AMD Graphics Drivers...'
-                    pkg install -y graphics/gpu-firmware-amd-kmod  && sysrc kld_list+=amdgpu && cd /usr/ports/graphics/drm-61-kmod && make install clean 
+                    pkg install -y graphics/gpu-firmware-amd-kmod && sysrc kld_list+=amdgpu && cd /usr/ports/graphics/drm-61-kmod && make install clean 
                     echo 'Finished!'
                     ;;
          
                 2)
                     echo 'Installing AMD Legacy Graphics Drivers...'
-                    pkg install -y graphics/gpu-firmware-amd-kmod  && sysrc kld_list+=radeonkms && cd /usr/ports/graphics/drm-61-kmod && make install clean 
+                    pkg install -y graphics/gpu-firmware-amd-kmod && sysrc kld_list+=radeonkms && cd /usr/ports/graphics/drm-61-kmod && make install clean 
                     echo 'Finished!'
                     ;;
          
                 3)
                     echo 'Installing Intel Graphics Drivers...'
-                    pkg install -y graphics/gpu-firmware-intel-kmod  && sysrc kld_list+=i915kms && cd /usr/ports/graphics/drm-61-kmod && make install clean 
+                    pkg install -y graphics/gpu-firmware-intel-kmod && sysrc kld_list+=i915kms && cd /usr/ports/graphics/drm-61-kmod && make install clean 
                     echo 'Finished!'
                     ;;
          
                 4)
                     echo 'Installing Nvidia Graphics Drivers...'
-                    pkg install -y nvidia-driver  && sysrc kld_list+=nvidia-modeset
+                    pkg install -y nvidia-driver && sysrc kld_list+=nvidia-modeset
                     echo 'Finished!'
                     ;;
          
                 5)
                     echo 'Installing VMware Graphics Drivers...'
-                    pkg install -y xf86-video-vmware  && sysrc kld_list+=vmwgfx
+                    pkg install -y xf86-video-vmware && sysrc kld_list+=vmwgfx
                     echo 'Finished!'
                     ;;
                
@@ -124,9 +160,9 @@ echo "
  ██████  ██   ██  ██████   ██████  ██      ███████ 
 "
 
-    echo -n "Enter the username of your non-root user to add to the video group: "
-        read video_group
-        pw groupmod video -m $video_group
+    printf "Enter the username of your non-root user to add to the video group: "
+        read -r video_group
+        pw groupmod video -m "$video_group"
 
         echo "
  ██████  ██    ██ ██
@@ -141,9 +177,9 @@ echo "
         echo "1 - Desktop Environment"
         echo "2 - Window Manager"
         echo " "
-        echo -n "Desktop Environment, or Window Manager?: "
+        printf "Desktop Environment, or Window Manager?: "
          
-        read gui_choice
+        read -r gui_choice
             case "$gui_choice" in
                 0)
                     sleep 1
@@ -171,8 +207,8 @@ echo "
                     echo "By the way, feel free to open an issue or PR in case you want anything new added"
                     echo " "
          
-                    echo -n "So, which desktop?: "
-                    read desktop_choice
+                    printf "So, which desktop?: "
+                    read -r desktop_choice
                         case "$desktop_choice" in
                             0)
                                 sleep 1
@@ -180,47 +216,47 @@ echo "
          
                             1)
                                 echo "Installing KDE Plasma..."
-                                pkg install -y kde5 sddm xorg  && sysrc dbus_enable=YES && sysrc sddm_enable=YES
+                                pkg install -y kde5 sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
                                 echo "Success!"
                             ;;
                             2)
                                 echo "Installing KDE Plasma Minimal..."
-                                pkg install -y plasma5-plasma konsole dolphin sddm xorg  && sysrc dbus_enable=YES && sysrc sddm_enable=YES
+                                pkg install -y plasma5-plasma konsole dolphin sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
                                 echo "Success!"
                             ;;
                             3)
                                 echo "Installing GNOME..."
-                                pkg install -y gnome xorg  && sysrc dbus_enable=YES && sysrc gdm_enable=YES
+                                pkg install -y gnome xorg && sysrc dbus_enable=YES && sysrc gdm_enable=YES
                                 echo "Success!"
                             ;;
                             4)
                                 echo "Installing GNOME Minimal..."
-                                pkg install -y gnome-lite gnome-terminal xorg  && sysrc dbus_enable=YES && sysrc gdm_enable=YES
+                                pkg install -y gnome-lite gnome-terminal xorg && sysrc dbus_enable=YES && sysrc gdm_enable=YES
                                 echo "Success!"
                             ;;
                             5)
                                 echo "Installing XFCE..."
-                                pkg install -y xfce lightdm lightdm-gtk-greeter xorg  && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
+                                pkg install -y xfce lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
                                 echo "Success!"
                             ;;
                             6)
                                 echo "Installing MATE..."
-                                pkg install -y mate lightdm lightdm-gtk-greeter xorg  && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
+                                pkg install -y mate lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
                                 echo "Success!"
                             ;;
                             7)
                                 echo "Installing MATE Minimal..."
-                                pkg install -y mate-base mate-terminal lightdm lightdm-gtk-greeter xorg  && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
+                                pkg install -y mate-base mate-terminal lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
                                 echo "Success!"
                             ;;
                             8)
                                 echo "Installing Cinnamon..."
-                                pkg install -y cinnamon lightdm lightdm-gtk-greeter xorg  && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
+                                pkg install -y cinnamon lightdm lightdm-gtk-greeter xorg && sysrc dbus_enable=YES && sysrc lightdm_enable=YES
                                 echo "Success!"
                             ;;
                             9)
                                 echo "Installing LXQT..."
-                                pkg install -y lxqt sddm xorg && sysrc dbus_enable=YES  && sysrc sddm_enable=YES
+                                pkg install -y lxqt sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
                                 echo "Success!"
                             ;;        
                            *)
@@ -249,8 +285,8 @@ echo "
                     echo "8 - Wayfire"
                     echo "By the way, feel free to open an issue or PR in case you want anything new added."
                     echo " "
-                    echo -n "So, what're you going with?: "
-                    read wm_choice
+                    printf "So, what're you going with?: "
+                    read -r wm_choice
                         case "$wm_choice" in
                             0)
                                 sleep 1
@@ -258,17 +294,17 @@ echo "
          
                             1)
                                 echo "Installing the third i..."
-                                pkg install -y i3 alacritty  && sysrc dbus_enable=YES
+                                pkg install -y i3 alacritty && sysrc dbus_enable=YES
                                 echo "Success!"
                             ;;
                             2)
                                 echo "Installing eye crack..."
-                                pkg install -y hyprland kitty wayland xorg-fonts seatd  && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
+                                pkg install -y hyprland kitty wayland xorg-fonts seatd && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
                                 echo "Success!"
                             ;;
                             3)
                                 echo "Installing an underrated wm..."
-                                pkg install -y hikari alacritty wayland xorg-fonts seatd  && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
+                                pkg install -y hikari alacritty wayland xorg-fonts seatd && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
                                 echo "Success!"
                             ;;
                             4)
@@ -278,17 +314,17 @@ echo "
                             ;;
                             5)
                                 echo "Installing river, dont get too wet..."
-                                pkg install -y river foot wayland xorg-fonts seatd  && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
+                                pkg install -y river foot wayland xorg-fonts seatd && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
                                 echo "Success!"
                             ;;
                             6)
                                 echo "Installing sway..."
-                                pkg install -y sway foot wayland xorg-fonts seatd  && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
+                                pkg install -y sway foot wayland xorg-fonts seatd && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
                                 echo "Success!"
                             ;;
                             7)
                                 echo "Installing sway but eye candy..."
-                                pkg install -y swayfx foot wayland xorg-fonts seatd  && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
+                                pkg install -y swayfx foot wayland xorg-fonts seatd && sysrc seatd_enable=YES && sysrc dbus_enable=YES && service seatd start
                                 echo "Success!"
                             ;;
                             8)
@@ -312,20 +348,20 @@ echo "
                     echo "1 - GDM"
                     echo "2 - LightDM"
                     echo "3 - SDDM"
-                    echo -n "So, what will it be?: "
-                    read lm_pick
+                    printf "So, what will it be?: "
+                    read -r lm_pick
                         case "$lm_pick" in
                             0)
                                 sleep 1
                             ;;
                             1)  
                                 echo "Installing GDM..."
-                                pkg install -y gdm  && sysrc gdm_enable=YES
+                                pkg install -y gdm && sysrc gdm_enable=YES
                                 echo "Success!"
                             ;;
                             2)
-                                echo "Installing  LightDM..."
-                                pkg install -y lightdm lightdm-gtk-greeter  && sysrc lightdm_enable=YES
+                                echo "Installing LightDM..."
+                                pkg install -y lightdm lightdm-gtk-greeter && sysrc lightdm_enable=YES
                                 echo "Success!"
                             ;;
                             3)
