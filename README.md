@@ -16,14 +16,14 @@ To enter super user:
 
 To fetch the script:
 
-```fetch https://raw.githubusercontent.com/coolerguy71/FreeBSD-SetupScript/main/setup.sh``` 
+```fetch https://raw.githubusercontent.com/coolerguy71/FreeBSD-SetupScript/main/setupbsd``` 
 
 To make executable:
 
-```chmod +x setup.sh```
+```chmod +x setupbsd```
 
 To start the script:
 
-```./setup.sh```
+```./setupbsd```
 
 > (C) 2025 es-j3
