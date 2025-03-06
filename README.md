@@ -22,8 +22,15 @@ To make executable:
 
 ```chmod +x setupbsd```
 
-To start the script:
+Now, you have two options:
 
-```./setupbsd```
+1. A guided install ```./setupbsd``` <--- just this
+
+
+2. An automated install. Maybe I need to explain this one a bit.
+
+```./setupbsd |Latest| |AMD|AMD-Legacy|Intel|Nvidia|VMware| |Plasma|Plasma-Minimal|GNOME|Gnome-Minimal|XFCE|Mate|Mate-Minimal|Cinnamon|LXQT|i3|Hyprland|Hikari|IceWM|River|Sway|SwayFX|Wayfire| |GDM|LightDM|SDDM|```
+
+Example: ```./setupbsd Latest AMD GNOME GDM```
 
 > (C) 2025 es-j3
