@@ -133,7 +133,7 @@ for autoconfiguration in "$@"; do
                 ;;
         i3)
                 echo "Installing the third i..."
-                pkg install -y i3 alacritty && sysrc dbus_enable=YES
+                pkg install -y i3 xterm xorg && sysrc dbus_enable=YES
                 echo "Success!"
                 ;;
         Hyprland)
@@ -148,7 +148,7 @@ for autoconfiguration in "$@"; do
                 ;;
         IceWM)
                 echo "Installing icy wm..."
-                pkg install -y icewm xterm && sysrc dbus_enable=YES
+                pkg install -y icewm xterm xorg && sysrc dbus_enable=YES
                 echo "Success!"
                 ;;
         River)
@@ -173,17 +173,17 @@ for autoconfiguration in "$@"; do
                 ;;
         GDM)
                 echo "Installing GDM..."
-                pkg install -y gdm && sysrc gdm_enable=YES
+                pkg install -y gdm xorg && sysrc gdm_enable=YES
                 echo "Success!"
                 ;;
         LightDM)
                 echo "Installing LightDM..."
-                pkg install -y lightdm lightdm-gtk-greeter && sysrc lightdm_enable=YES
+                pkg install -y xorg lightdm lightdm-gtk-greeter && sysrc lightdm_enable=YES
                 echo "Success!"
                 ;;
         SDDM)
                 echo "Installing SDDM..."
-                pkg install -y sddm && sysrc sddm_enable="YES"
+                pkg install -y sddm xorg && sysrc sddm_enable="YES"
                 echo "Success!"
                 ;;
         *)
