@@ -88,7 +88,7 @@ for autoconfiguration in "$@"; do
                 ;;
         Plasma)
                 echo "Installing KDE Plasma..."
-                pkg install -y kde5 sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
+                pkg install -y kde sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
                 echo "Success!"
                 ;;
         Plasma-Minimal)
@@ -340,7 +340,7 @@ case "$gui_choice" in
 
         1)
                 echo "Installing KDE Plasma..."
-                pkg install -y kde5 sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
+                pkg install -y kde sddm xorg && sysrc dbus_enable=YES && sysrc sddm_enable=YES
                 echo "Success!"
                 ;;
         2)
