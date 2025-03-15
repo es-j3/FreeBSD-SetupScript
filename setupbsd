@@ -4,8 +4,8 @@ SRC_PATH="/usr/src/sys"
 PORTS_PATH="/usr/ports/emulators"
 
 if [ "$(id -u)" -ne 0 ]; then
-    echo "Root is required."
-    exit 1
+        echo "Root is required."
+        exit 1
 fi
 
 if [ ! -d "$SRC_PATH" ]; then
@@ -55,10 +55,13 @@ for autoconfiguration in "$@"; do
         case "$autoconfiguration" in
         "Latest")
                 echo "Alright, updating FreeBSD to the latest repo!"
-                echo "FreeBSD: {" >/etc/pkg/FreeBSD.conf
-                echo "  url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest"," >>/etc/pkg/FreeBSD.conf
-                echo "  mirror_type: "srv"," >>/etc/pkg/FreeBSD.conf
-                echo "}" >>/etc/pkg/FreeBSD.conf
+                echo "FreeBSD: {
+   url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest",
+   mirror_type: "srv",
+   signature_type: "fingerprints",
+   fingerprints: "/usr/share/keys/pkg",
+   enabled: no
+}" >/etc/pkg/FreeBSD.conf
                 ;;
 
         "AMD")
@@ -212,10 +215,13 @@ read -r repo_switch
 case "$repo_switch" in
 [Yy])
         echo "Alright, updating FreeBSD to the latest repo!"
-        echo "FreeBSD: {" >/etc/pkg/FreeBSD.conf
-        echo "  url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest"," >>/etc/pkg/FreeBSD.conf
-        echo "  mirror_type: "srv"," >>/etc/pkg/FreeBSD.conf
-        echo "}" >>/etc/pkg/FreeBSD.conf
+        echo "FreeBSD: {
+   url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest",
+   mirror_type: "srv",
+   signature_type: "fingerprints",
+   fingerprints: "/usr/share/keys/pkg",
+   enabled: no
+}" >/etc/pkg/FreeBSD.conf
         ;;
 [Nn])
         echo "Alright, no changes made."
