@@ -62,6 +62,7 @@ for autoconfiguration in "$@"; do
    fingerprints: "/usr/share/keys/pkg",
    enabled: yes
 }' >/etc/pkg/FreeBSD.conf
+                pkg update
                 ;;
 
         "AMD")
