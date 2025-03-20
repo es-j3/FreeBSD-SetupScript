@@ -55,13 +55,13 @@ for autoconfiguration in "$@"; do
         case "$autoconfiguration" in
         "Latest")
                 echo "Alright, updating FreeBSD to the latest repo!"
-                echo "FreeBSD: {
+                echo 'FreeBSD: {
    url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest",
    mirror_type: "srv",
    signature_type: "fingerprints",
    fingerprints: "/usr/share/keys/pkg",
    enabled: yes
-}" >/etc/pkg/FreeBSD.conf
+}' >/etc/pkg/FreeBSD.conf
                 ;;
 
         "AMD")
@@ -215,13 +215,13 @@ read -r repo_switch
 case "$repo_switch" in
 [Yy])
         echo "Alright, updating FreeBSD to the latest repo!"
-        echo "FreeBSD: {
+        echo 'FreeBSD: {
    url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest",
    mirror_type: "srv",
    signature_type: "fingerprints",
    fingerprints: "/usr/share/keys/pkg",
    enabled: yes
-}" >/etc/pkg/FreeBSD.conf
+}' >/etc/pkg/FreeBSD.conf
         ;;
 [Nn])
         echo "Alright, no changes made."
